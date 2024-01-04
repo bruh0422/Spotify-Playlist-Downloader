@@ -40,7 +40,6 @@ while True:
     )
 
     if response.status_code == 200:
-        print(response.json())
         playlist = [f"{i['track']['artists'][0]['name']} - {i['track']['name']}" for i in response.json()['items']]
         print(f'成功取得下列播放清單歌曲 (共 {len(playlist)} 項)：')
         print('\n'.join(playlist))
@@ -52,7 +51,7 @@ while True:
 print('開始下載...')
 
 ydl_opts = {
-    'format': 'bestaudio/best',
+    'format': 'wav/bestaudio/best',
     'outtmpl': 'temp/%(title)s.%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
