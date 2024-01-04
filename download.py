@@ -62,8 +62,7 @@ ydl_opts = {
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     index = 1
     for song in playlist:
-        print()
-        print(f'正在下載 {song} ({index} / {len(playlist)})')
+        print(f'\n正在下載 {song} ({index} / {len(playlist)})')
         ydl.extract_info(f"ytsearch:{song}", download=True)['entries'][0]
         os.rename(f"temp/{os.listdir('temp')[0]}", f'output/{song}.wav')
         index += 1
