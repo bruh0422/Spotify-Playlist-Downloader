@@ -48,6 +48,19 @@ while True:
     else:
         print('無法取得播放清單。')
 
+saved = list(map(lambda s: s.removesuffix('.wav'), os.listdir('output')))
+skip = False
+
+if len(set(playlist + saved)) != 0:
+    while True:
+        skip = input('檢測到重複下載曲目。跳過重複曲目? (y/n) ')
+        if skip not in ['y', 'n']:
+            print('輸入有誤，請再試一次。')
+        else:
+            skip = True if skip == 'y' else False
+            print(('跳過' if skip else '不跳過') + '重複曲目')
+            break
+
 print('開始下載...')
 
 ydl_opts = {
@@ -62,9 +75,12 @@ ydl_opts = {
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     index = 1
     for song in playlist:
-        print(f'\n正在下載 {song} ({index} / {len(playlist)})')
-        ydl.extract_info(f"ytsearch:{song}", download=True)['entries'][0]
-        os.rename(f"temp/{os.listdir('temp')[0]}", f'output/{song}.wav')
+        if skip and f'{song}.wav' in os.listdir('output'):
+            print(f'({index} / {len(playlist)}) 跳過 {song}...')
+        else:
+            print(f'\n({index} / {len(playlist)}) 正在下載 {song}')
+            ydl.extract_info(f"ytsearch:{song}", download=True)['entries'][0]
+            os.rename(f"temp/{os.listdir('temp')[0]}", f'output/{song}.wav')
         index += 1
 
-print('完成')
+print('完成。')
