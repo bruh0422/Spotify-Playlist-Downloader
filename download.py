@@ -2,9 +2,14 @@ import yt_dlp
 import requests
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
+self_input = False
+
 while True:
-    spotify_client_id = input('輸入 Spotify Client ID: ')
-    spotify_client_secret = input('輸入 Spotify Client secret: ')
+    spotify_client_id = input('輸入 Spotify Client ID: ') if self_input else os.getenv('spotify_client_id')
+    spotify_client_secret = input('輸入 Spotify Client secret: ') if self_input else os.getenv('spotify_client_secret')
 
     print('驗證及取得 Access Token...')
 
@@ -27,6 +32,7 @@ while True:
         break
     else:
         print('驗證失敗，請再試一次。')
+        self_input = True
 
 while True:
     playlist_url = input('輸入 Spotify 播放清單網址: ')
