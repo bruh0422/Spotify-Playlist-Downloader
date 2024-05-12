@@ -24,6 +24,16 @@ def duplicate(list1: list, list2: list):
                 return True
     return False
 
+def make_request(limit: int, offset: int):
+    response = requests.get(
+        url=f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit={limit}&offset={offset}',
+        headers={
+            'Authorization': f'Bearer {spotify_access_token}'
+        }
+    )
+
+    return response
+
 self_input = False
 
 while True:
@@ -55,23 +65,36 @@ while True:
 
 while True:
     playlist_url = input('輸入 Spotify 播放清單網址: ')
-    playlist_id = playlist_url.split('/')[4].split('?')[0]
 
-    response = requests.get(
-        url=f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks',
-        headers={
-            'Authorization': f'Bearer {spotify_access_token}'
-        }
-    )
-
-    if response.status_code == 200:
-        playlist = [f"{i['track']['artists'][0]['name']} - {i['track']['name']}" for i in response.json()['items']]
-        print(f'成功取得下列播放清單歌曲 (共 {len(playlist)} 項)：')
-        print('\n'.join(playlist))
-        line()
-        break
-    else:
+    try:
+        playlist_id = playlist_url.split('/')[4].split('?')[0]
+    except:
         print('無法取得播放清單。')
+    else:
+        response = make_request(1, 0)
+
+        if response.status_code == 200:
+            data = response.json()
+            total = data['total']
+
+            print(f'\n已確認播放清單可用 (共 {total} 首)，正在讀取歌曲...')
+
+            playlist = []
+            for offset in range(0, data['total'], 100):
+                response = make_request(100, offset)
+
+                data = response.json()
+                items = [f"{i['track']['artists'][0]['name']} - {i['track']['name']}" for i in data['items']]
+                playlist += items
+
+                print(f'已讀取 {len(playlist)} / {total} 首...')
+
+            print(f'\n成功取得下列播放清單歌曲 (共 {len(playlist)} 首)：')
+            print(', '.join(playlist))
+            line()
+            break
+        else:
+            print('無法取得播放清單。')
 
 saved = list(map(lambda s: s.removesuffix('.wav'), os.listdir('output')))
 skip = False
@@ -83,9 +106,12 @@ if duplicate(playlist, saved):
             print('輸入有誤，請再試一次。')
         else:
             skip = True if skip == 'y' else False
-            print(('跳過' if skip else '不跳過') + '重複曲目')
+            print(('跳過' if skip else '不跳過') + '重複曲目。')
             break
+else:
+    print('無重複下載曲目。')
 
+line()
 print('開始下載...')
 
 ydl_opts = {
@@ -97,15 +123,22 @@ ydl_opts = {
     }]
 }
 
+index = 1
+total = len(playlist)
+
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-    index = 1
     for song in playlist:
+        print(f'\n({index} / {total}) ', end='')
         if skip and f'{song}.wav' in os.listdir('output'):
-            print(f'({index} / {len(playlist)}) 跳過 {song} ...')
+            print(f'跳過 {song} ...')
         else:
-            print(f'\n({index} / {len(playlist)}) 正在下載 {song}')
-            ydl.extract_info(f"ytsearch:{song}", download=True)['entries'][0]
-            os.rename(f"temp/{os.listdir('temp')[0]}", f'output/{song}.wav')
+            print(f'正在下載 {song} ...')
+            try:
+                ydl.extract_info(f"ytsearch:{song}", download=True)['entries'][0]
+                os.rename(f"temp/{os.listdir('temp')[0]}", f'output/{song}.wav')
+            except Exception as e:
+                print(f'未知錯誤。({e})')
         index += 1
 
+line()
 print('完成。')
