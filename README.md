@@ -20,14 +20,15 @@ pip install -r requirements.txt
 ### 取得 Spotify API Key
 1. 前往 [Spotify for Developers](https://developer.spotify.com/)，點擊右上方的 "Log in" 登入帳號。
 2. 登入後，點擊右上方的下拉式選單，選擇 "[Dashboard](https://developer.spotify.com/dashboard)"。
-3. 點擊 "[Create app](https://developer.spotify.com/dashboard/create)"，依序填入 "App name"、"App description"、"Redirect URIs" 並勾選 "I understand and agree with Spotify's Developer Terms of Service and Design Guidelines" 後按下 "Create"。
-    > [!TIP]
-    > "Redirect URIs" 如果你不知道要填什麼，可以直接填入 "https://google.com/"，這格填了什麼無所謂。
-4. 之後網頁會重導向到你的應用頁面，點擊右上方的 "Settings" 進入設定頁面。
-5. 在 "Basic Information" 頁面中你會看到你的 "Client ID"，點擊下面的 "View client secret" 顯示你的 Client secret。
-    > [!CAUTION]
-    > 不要將這兩組資料與他人分享及共用。
-6. 將 .env 中的 `spotify_client_id` 與 `spotify_client_secret` 替換為你的 Client ID 與 Client secret。
+3. 點擊 "[Create app](https://developer.spotify.com/dashboard/create)"，依序填入 "App name"、"App description"、"Redirect URIs" <sup>*Tip</sup> 並勾選 "I understand and agree with Spotify's Developer Terms of Service and Design Guidelines" 後按下 "Create"。
+5. 之後網頁會重導向到你的應用頁面，點擊右上方的 "Settings" 進入設定頁面。
+6. 在 "Basic Information" 頁面中你會看到你的 "Client ID"，點擊下面的 "View client secret" 顯示你的 Client secret。
+7. 將 .env 中的 `spotify_client_id` 與 `spotify_client_secret` 替換為你的 Client ID 與 Client secret。 <sup>*Caution</sup>
+> [!TIP]
+> "Redirect URIs" 如果你不知道要填什麼，可以直接填入 `https://google.com/`，這格填了什麼無所謂。
+
+> [!CAUTION]
+> 不要將 `Client ID` 及 `Client secret` 與他人分享及共用。
 
 ## 開始使用
 ```bash
