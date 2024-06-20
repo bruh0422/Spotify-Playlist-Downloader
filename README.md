@@ -1,4 +1,4 @@
-# 下載 Spotify 播放清單
+# Spotify 播放清單下載器
 下載公開的 Spotify 播放清單內的所有歌曲，不需要 Spotify Premium。
 
 ## 運作原理
